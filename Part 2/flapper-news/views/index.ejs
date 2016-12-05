@@ -1,3 +1,5 @@
+<html>
+
 <head>
   <title>Flapper News</title>
   <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
@@ -34,7 +36,7 @@
           </span>
         </span>
         <span>
-  <a href="#/posts/{{$index}}">Comments</a>
+  <a href="#/posts/{{post._id}}">Comments</a>
 </span>
     </div>
 
@@ -78,10 +80,7 @@
   <h3>Add a new comment</h3>
 
   <div class="form-group">
-    <input type="text"
-    class="form-control"
-    placeholder="Comment"
-    ng-model="body"></input>
+    <input type="text" class="form-control" placeholder="Comment" ng-model="body"></input>
   </div>
   <button type="submit" class="btn btn-primary">Post</button>
  </form>

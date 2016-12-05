@@ -5,26 +5,24 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+var app = express();
 
 var mongoose = require('mongoose');
+
 require('./models/Posts');
 require('./models/Comments');
 
-/* Maakt connectie met MongoDB
+//connect mongodb
 mongoose.connect('mongodb://localhost/news', function(err,db){
     if (!err){
-        console.log('Connected to /news!');
+        console.log('Connected to /flappernews!');
     } else{
         console.dir(err); //failed to connect
     }
-});*/
+});
 
-mongoose.connect('mongodb://localhost/news');
-
-
-var app = express();
+var index = require('./routes/index');
+var users = require('./routes/users');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
