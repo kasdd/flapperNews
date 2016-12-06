@@ -138,6 +138,16 @@ app.factory('posts', ['$http', 'auth', function ($http, auth) {
         });
     };
 
+    o.downvote = function(post){
+        return $http.put('/posts/' + post._id + '/downvote', null, {
+            headers : {
+                Authorization : 'Bearer ' + auth.getToken()
+            }
+        }).success(function(data){
+            post.upvotes -= 1;
+        })
+    }
+
     o.get = function (id) {
         return $http.get('/posts/' + id).then(function (res) {
             return res.data;
@@ -168,7 +178,7 @@ app.factory('posts', ['$http', 'auth', function ($http, auth) {
                 Authorization: 'Bearer ' + auth.getToken()
             }
         }).success(function (data) {
-            comment.upvotes += 1;
+            comment.upvotes -= 1;
         });
     };
 
@@ -197,13 +207,15 @@ app.controller('MainCtrl', [
         $scope.incrementUpvotes = function (post) {
             posts.upvote(post);
         };
+
+        $scope.incrementDownvotes = function(post){
+            posts.downvote(post);
+        }
     }
 ]);
 
-app.controller('PostsCtrl', [
-    '$scope', 'posts', 'post','auth' ,
+app.controller('PostsCtrl', ['$scope', 'posts', 'post', 'auth',
     function ($scope, posts, post, auth) {
-        $scope.posts = posts.posts; //Hier zat bug, anders had ik leeg object posts
         $scope.post = post;
         $scope.isLoggedIn = auth.isLoggedIn;
 
