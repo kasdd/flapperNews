@@ -3,39 +3,40 @@
 <head>
   <title>Flapper News</title>
   <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular.min.js"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
-  <script src="/javascripts/angularApp.js"></script>
-  <style>
-    .glyphicon-thumbs-up {
-      cursor: pointer
-    }
-  </style>
+  <link href="/stylesheets/style.css" rel="stylesheet">
 </head>
 
 <body ng-app="flapperNews">
-  <nav class="navbar navbar-default pull-right" ng-controller="NavCtrl">
+
+  <nav class="navbar navbar-default pull-right" ng-controller="NavController as ctrl">
     <ul class="nav navbar-nav">
-      <li ng-show="isLoggedIn()"><a>{{ currentUser() }}</a></li>
-      <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">Log Out</a></li>
-      <li ng-hide="isLoggedIn()"><a href="/#/login">Log In</a></li>
-      <li ng-hide="isLoggedIn()"><a href="/#/register">Register</a></li>
+      <li ng-show="ctrl.isLoggedIn()"><a>{{ctrl.currentUser()}}</a></li>
+      <li ng-show="ctrl.isLoggedIn()"><a href="" ng-click="ctrl.logOut()">Log Out</a></li>
+      <li ng-hide="ctrl.isLoggedIn()"><a href="/#/login">Log In</a></li>
+      <li ng-hide="ctrl.isLoggedIn()"><a href="/#/register">Register</a></li>
     </ul>
   </nav>
+
+
+
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
       <ui-view></ui-view>
       <!-- Waar de template moet geplaatst worden in actieve state !-->
     </div>
   </div>
+
+
+
+  
   <!-- Home state !-->
   <script type="text/ng-template" id="/home.html">
   <div class="page-header">
     <h1>Flapper News</h1>
   </div>
-    <div ng-repeat="post in posts | orderBy:'-upvotes'">
-        <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(post)"></span> {{post.upvotes}}
-        <span class="glyphicon glyphicon-thumbs-down" ng-click="incrementDownvotes(post)"></span>
+    <div ng-repeat="post in ctrl.posts | orderBy:'-upvotes'">
+        <span class="glyphicon glyphicon-thumbs-up" ng-click="ctrl.incrementUpvotes(post)"></span> {{post.upvotes}}
+        <span class="glyphicon glyphicon-thumbs-down" ng-click="ctrl.incrementDownvotes(post)"></span>
         <span style="font-size:20px; margin-left:10px;">
           <a ng-show="post.link" href="{{post.link}}">
             {{post.title}}
@@ -51,55 +52,53 @@
   <a href="#/posts/{{post._id}}">Comments</a>
 </span>
     </div>
-
-    <div ng-hide="isLoggedIn()">
+    <div ng-hide="ctrl.isLoggedIn()">
       <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
     </div>
-
-    <form ng-submit="addPost()" ng-show="isLoggedIn()" style="margin-top:30px;">
+    <form ng-submit="ctrl.addPost()" ng-show="ctrl.isLoggedIn()" style="margin-top:30px;">
         <h3>Add a new post</h3>
 
         <div class="form-group">
-            <input type="text" class="form-control" placeholder="Title" ng-model="title"></input>
+            <input type="text" class="form-control" placeholder="Title" ng-model="ctrl.title"></input>
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" placeholder="Link" ng-model="link"></input>
+            <input type="text" class="form-control" placeholder="Link" ng-model="ctrl.link"></input>
         </div>
         <button type="submit" class="btn btn-primary">Post</button>
     </form>
 </script>
+
+
   <!-- Posts state !-->
   <script type="text/ng-template" id="/posts.html">
   <div class="page-header">
     <h3>
-      <a ng-show="post.link" href="{{post.link}}">
-        {{post.title}}
+      <a href="{{ctrl.post.link}}">
+        {{ctrl.post.title}}
       </a>
-      <span ng-hide="post.link">
-        {{post.title}}
-      </span>
     </h3>
   </div>
 
-<div ng-repeat="comment in post.comments | orderBy:'-upvotes'">
-      <span class="glyphicon glyphicon-thumbs-up" ng-click="upvote(comment)"></span>
+<div ng-repeat="comment in ctrl.post.comments | orderBy:'-upvotes'" >
+      <span class="glyphicon glyphicon-thumbs-up" ng-click="ctrl.upvote(comment)"></span>
         {{comment.upvotes}} 
-      <span class="glyphicon glyphicon-thumbs-down" ng-click="downvote(comment)"></span>
+      <span class="glyphicon glyphicon-thumbs-down" ng-click="ctrl.downvote(comment)"></span>
         - by {{comment.author}}
       <span style="font-size:20px; margin-left:10px;">
         {{comment.body}}
       </span>
-    </div>
+      <span ng-show="ctrl.isLoggedIn()" class="pull-right glyphicon glyphicon-trash" ng-click="ctrl.deleteComment(comment)"></span>
+</div>
 
-  <div ng-hide="isLoggedIn()">
+  <div ng-hide="ctrl.isLoggedIn()">
     <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can comment.</h3>
   </div>
 
- <form ng-submit="addComment()" ng-show="isLoggedIn()" style="margin-top:30px;">
+ <form ng-submit="ctrl.addComment()" ng-show="ctrl.isLoggedIn()" style="margin-top:30px;">
   <h3>Add a new comment</h3>
 
   <div class="form-group">
-    <input type="text" class="form-control" placeholder="Comment" ng-model="body"></input>
+    <input type="text" class="form-control" placeholder="Comment" ng-model="ctrl.body"></input>
   </div>
   <button type="submit" class="btn btn-primary">Post</button>
  </form>
@@ -115,7 +114,7 @@
     <span>{{ error.message }}</span>
   </div>
 
-  <form ng-submit="register()"
+  <form ng-submit="ctrl.register()"
     style="margin-top:30px;">
     <h3>Register</h3>
 
@@ -123,13 +122,13 @@
       <input type="text"
       class="form-control"
       placeholder="Username"
-      ng-model="user.username"></input>
+      ng-model="ctrl.user.username"></input>
     </div>
     <div class="form-group">
       <input type="password"
       class="form-control"
       placeholder="Password"
-      ng-model="user.password"></input>
+      ng-model="ctrl.user.password"></input>
     </div>
     <button type="submit" class="btn btn-primary">Register</button>
   </form>
@@ -145,7 +144,7 @@
     <span>{{ error.message }}</span>
   </div>
 
-  <form ng-submit="logIn()"
+  <form ng-submit="ctrl.logIn()"
     style="margin-top:30px;">
     <h3>Log In</h3>
 
@@ -153,18 +152,31 @@
       <input type="text"
       class="form-control"
       placeholder="Username"
-      ng-model="user.username"></input>
+      ng-model="ctrl.user.username" required></input>
     </div>
     <div class="form-group">
       <input type="password"
       class="form-control"
       placeholder="Password"
-      ng-model="user.password"></input>
+      ng-model="ctrl.user.password" required></input>
     </div>
     <button type="submit" class="btn btn-primary">Log In</button>
   </form>
   </script>
 
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
+    <script src="/javascripts/flapperNewsModule.js"></script>
+    <script src="/javascripts/angularApp.js" /></script>
+    <script src="/controllers/MainController.js"></script>
+    <script src="/controllers/AuthController.js"></script>
+    <script src="/controllers/NavController.js"></script>
+    <script src="/controllers/PostController.js"></script>
+    <script src="/services/authService.js"></script>
+    <script src="/services/postService.js"></script>
+    <script src="/services/postService.js"></script>
+    <script src="/directives/customDirective.js"></script>
 </body>
 
 </html>
